@@ -172,6 +172,31 @@ TEST(FloatingJointTest, interpolation_test)
   }
 }
 
+TEST(RobotModelLoaderTest, JointLimitParametersTest)
+{
+  // Initialize ROS node with joint limit parameters
+  rclcpp::init(0, nullptr);
+  auto TEST_JOINT_NODE = rclcpp::Node::make_shared("test_joint_limit_parameters");
+
+  // Define joint limit parameters
+  TEST_JOINT_NODE->declare_parameter("test_robot_description.joint_limits.joint1.has_position_limits", true);
+  TEST_JOINT_NODE->declare_parameter("test_robot_description.joint_limits.joint1.max_position", 1.0);
+  TEST_JOINT_NODE->declare_parameter("test_robot_description.joint_limits.joint1.min_position", -1.0);
+
+  // Get the parameters from the node
+  bool has_position_limits;
+  double max_position, min_position;
+
+  TEST_JOINT_NODE->get_parameter("test_robot_description.joint_limits.joint1.has_position_limits", has_position_limits);
+  TEST_JOINT_NODE->get_parameter("test_robot_description.joint_limits.joint1.max_position", max_position);
+  TEST_JOINT_NODE->get_parameter("test_robot_description.joint_limits.joint1.min_position", min_position);
+
+  // Check if the joint limit parameters are declared and have the expected values
+  EXPECT_TRUE(has_position_limits);
+  EXPECT_DOUBLE_EQ(max_position, 1.0);
+  EXPECT_DOUBLE_EQ(min_position, -1.0);
+}
+
 int main(int argc, char** argv)
 {
   testing::InitGoogleTest(&argc, argv);
